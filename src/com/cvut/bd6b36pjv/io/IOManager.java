@@ -44,7 +44,14 @@ public interface IOManager {
      * @param operands Operands
      * @param op Operation
      * @param result Result of calculation
+     * @param precision Precision of display (not calculation)
      * @throws WrongOperationException See {@see WrongOperationException}
      */
-    void printResult(double[] operands, Operation op, double result) throws WrongOperationException;
+    void printResult(double[] operands, Operation op, double result, int precision) throws WrongOperationException;
+
+    /**
+     * Prints error message
+     * @param s error code
+     */
+    void errorMessage(String s);
 }

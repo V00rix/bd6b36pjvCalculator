@@ -1,5 +1,7 @@
 package com.cvut.bd6b36pjv.calculator;
 
+import com.cvut.bd6b36pjv.exceptions.WrongOperationException;
+
 public interface Calculator {
     /**
      * Get latest operation's result
@@ -9,9 +11,9 @@ public interface Calculator {
 
     /**
      * Compute result given operation and operands
-     * @param operation Operation
+     * @param op Operation
      * @param operands Operands
      * @return Result of operation
      */
-    double compute(Operation operation, double[] operands);
+    double compute(Operation op, double[] operands) throws WrongOperationException;
 }

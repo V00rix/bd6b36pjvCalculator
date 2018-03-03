@@ -1,11 +1,14 @@
 package com.cvut.bd6b36pjv.io;
 
 import com.cvut.bd6b36pjv.calculator.Operation;
+import com.cvut.bd6b36pjv.exceptions.DivisionByZeroException;
 import com.cvut.bd6b36pjv.exceptions.WrongOperandException;
 import com.cvut.bd6b36pjv.exceptions.WrongOperationException;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -25,7 +28,7 @@ public class BasicIOManager implements IOManager {
     // initialization
     static {
         textsDefault = new HashMap<String, String>();
-        textsDefault.put("operation", "Vyber operaci (1-soucet, 2-rozdil, 3-soucin, 4-podil):");
+        textsDefault.put("operation", "Vyber operaci (1-soucet, 2-rozdil, 3-soucin, 4-podil, q-ukoncit):");
 
         textsDefault.put("operand", "Zadej operand: ");
 
@@ -131,10 +134,14 @@ public class BasicIOManager implements IOManager {
                 operands[1] = this.parseReal(in.next());
                 return operands;
             case DIVISION:
-                out.print(this.texts.get("/1"));
+                out.print(this.texts.get("/0"));
                 operands[0] = this.parseReal(in.next());
-                out.print(this.texts.get("/2"));
+                out.print(this.texts.get("/1"));
                 operands[1] = this.parseReal(in.next());
+                if (Double.compare(operands[1], 0.0) == 0) {
+                    out.print(this.texts.get("error/0"));
+                    throw new DivisionByZeroException();
+                }
                 return operands;
             default:
                 throw new WrongOperationException();
@@ -148,8 +155,28 @@ public class BasicIOManager implements IOManager {
     }
 
     @Override
-    public void printResult(double[] operands, Operation op, double result) throws WrongOperationException {
-        out.printf("%s %s %s %s = %s", operands[0], op.getSign(), operands[1], result);
+    public void printResult(double[] operands, Operation op, double result, int precision) throws WrongOperationException {
+        StringBuilder formatString = new StringBuilder("#");
+
+        if (precision > 0) {
+            formatString.append(".");
+            for (int i = 0; i < precision; i++) {
+                formatString.append("#");
+            }
+        }
+
+        DecimalFormat df = new DecimalFormat(formatString.toString());
+        df.setRoundingMode(RoundingMode.HALF_UP);
+
+
+        out.printf("%s %s %s = %s\n\n", df.format(operands[0]), op.getSign(),
+                Double.compare(operands[1], 0.0) < 0 ? "(" + df.format(operands[1]) + ")" : df.format(operands[1]),
+                df.format(result));
+    }
+
+    @Override
+    public void errorMessage(String s) {
+        this.out.println(this.texts.get(s));
     }
 
     //--- Constructors ---//
@@ -200,7 +227,6 @@ public class BasicIOManager implements IOManager {
             throw new WrongOperandException();
         }
     }
-
 
     /**
      * Tries to parse string for an unsigned integer value

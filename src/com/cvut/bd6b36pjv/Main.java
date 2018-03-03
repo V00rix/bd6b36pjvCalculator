@@ -3,6 +3,7 @@ package com.cvut.bd6b36pjv;
 import com.cvut.bd6b36pjv.calculator.Calculator;
 import com.cvut.bd6b36pjv.calculator.DefaultCalculator;
 import com.cvut.bd6b36pjv.calculator.Operation;
+import com.cvut.bd6b36pjv.exceptions.DivisionByZeroException;
 import com.cvut.bd6b36pjv.exceptions.WrongInputException;
 import com.cvut.bd6b36pjv.io.BasicIOManager;
 import com.cvut.bd6b36pjv.io.IOManager;
@@ -28,9 +29,12 @@ public class Main {
                 if (op == QUIT)
                     break;
 
-                io.printResult(calc.compute(op, io.readOperands(op)));
+                double[] operands = io.readOperands(op);
+                int precision = io.readPrecision();
 
-            } catch (WrongInputException e) {
+                io.printResult(operands, op, calc.compute(op, operands), precision);
+            }
+            catch (WrongInputException e) {
                 op = null;
             } catch (UnsupportedOperationException e) {
                 System.out.println("Operation isn't yet implemented");

@@ -1,2 +1,3 @@
 ### CVUT172
-#### 1. Úloha - konzolní kalkulačka
+#### Úloha 1 
+Konzolová kalkulačka

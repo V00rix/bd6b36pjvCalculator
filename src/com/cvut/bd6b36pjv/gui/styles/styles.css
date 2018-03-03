@@ -1,0 +1,20 @@
+.root {
+    -fx-padding: 10;
+    -fx-spacing: 5;
+}
+
+.custom-button {
+    -fx-text-fill: #f2f2f2;
+    -fx-font-size: 32px;
+    -fx-padding: 10;
+    -fx-background-color: #181818;
+    -fx-border-radius: 0;
+    -fx-border-color: #0f0f0f;
+    -fx-border-width: 1;
+    -fx-min-width: 180;
+    -fx-min-height: 120;
+}
+
+.custom-button:hover {
+    -fx-background-color: #666666;
+}
