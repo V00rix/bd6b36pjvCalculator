@@ -1,24 +1,25 @@
-package com.cvut.bd6b36pjv.io;
+package com.cvut.bd6b36pjv.io.implementation;
 
-import com.cvut.bd6b36pjv.calculator.Operation;
+import com.cvut.bd6b36pjv.calculator.api.IReal;
+import com.cvut.bd6b36pjv.calculator.domain.BasicCalculatorOperation;
+import com.cvut.bd6b36pjv.calculator.domain.Real;
 import com.cvut.bd6b36pjv.exceptions.DivisionByZeroException;
 import com.cvut.bd6b36pjv.exceptions.WrongOperandException;
 import com.cvut.bd6b36pjv.exceptions.WrongOperationException;
+import com.cvut.bd6b36pjv.io.api.IOManager;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import static com.cvut.bd6b36pjv.calculator.Operation.*;
+import static com.cvut.bd6b36pjv.calculator.domain.BasicCalculatorOperation.*;
 
 /**
  * @see IOManager basic implementation
  */
-public class BasicIOManager implements IOManager {
+public class DefaultIOManager implements IOManager {
     //--- Static fields ---//
 
     /**
@@ -75,35 +76,21 @@ public class BasicIOManager implements IOManager {
 
     //--- Implementation ---//
     @Override
-    public Operation readOperation() throws WrongOperationException {
-        out.print(this.texts.get("operation"));
-
-        String input = in.next();
-        switch (input) {
-            case "1":
-            case "+":
-                return ADDITION;
-            case "2":
-            case "-":
-                return SUBTRACTION;
-            case "3":
-            case "*":
-                return MULTIPLICATION;
-            case "4":
-            case "/":
-                return DIVISION;
-            case "q":
-            case "quit":
-                return QUIT;
-            default:
+    public String readOperation() throws WrongOperationException {
+        try {
+            out.print(this.texts.get("operation"));
+            String input = in.next();
+            return BasicCalculatorOperation.Code(input);
+        }
+        catch (WrongOperationException e) {
                 out.println(this.texts.get("errorOperation"));
                 throw new WrongOperationException();
         }
     }
 
     @Override
-    public double[] readOperands() throws WrongOperandException, WrongOperationException {
-        double[] operands = new double[2];
+    public IReal[] readOperands() throws WrongOperandException, WrongOperationException {
+        IReal[] operands = new Real[2];
         out.print(this.texts.get("operand"));
         operands[0] = this.parseReal(in.next());
         out.print(this.texts.get("operand"));
@@ -112,8 +99,8 @@ public class BasicIOManager implements IOManager {
     }
 
     @Override
-    public double[] readOperands(Operation op) throws WrongOperandException, WrongOperationException {
-        double[] operands = new double[2];
+    public IReal[] readOperands(String op) throws WrongOperandException, WrongOperationException {
+        IReal[] operands = new Real[2];
         switch (op) {
             case ADDITION:
                 out.print(this.texts.get("+"));
@@ -138,7 +125,7 @@ public class BasicIOManager implements IOManager {
                 operands[0] = this.parseReal(in.next());
                 out.print(this.texts.get("/1"));
                 operands[1] = this.parseReal(in.next());
-                if (Double.compare(operands[1], 0.0) == 0) {
+                if (Double.compare(operands[1].doubleValue(), 0.0) == 0) {
                     out.print(this.texts.get("error/0"));
                     throw new DivisionByZeroException();
                 }
@@ -155,23 +142,11 @@ public class BasicIOManager implements IOManager {
     }
 
     @Override
-    public void printResult(double[] operands, Operation op, double result, int precision) throws WrongOperationException {
-        StringBuilder formatString = new StringBuilder("#");
-
-        if (precision > 0) {
-            formatString.append(".");
-            for (int i = 0; i < precision; i++) {
-                formatString.append("#");
-            }
-        }
-
-        DecimalFormat df = new DecimalFormat(formatString.toString());
-        df.setRoundingMode(RoundingMode.HALF_UP);
-
-
-        out.printf("%s %s %s = %s\n\n", df.format(operands[0]), op.getSign(),
-                Double.compare(operands[1], 0.0) < 0 ? "(" + df.format(operands[1]) + ")" : df.format(operands[1]),
-                df.format(result));
+    public void printResult(IReal[] operands, String op, IReal result, int precision) throws WrongOperationException {
+        // TODO: optimise precision
+        out.printf("%s %s %s = %s\n\n", operands[0].stringValue(precision), op,
+                Double.compare(operands[1].doubleValue(), 0.0) < 0 ? "(" + operands[1].stringValue(precision) + ")" : operands[1].stringValue(precision),
+                result.stringValue(precision));
     }
 
     @Override
@@ -184,7 +159,7 @@ public class BasicIOManager implements IOManager {
     /**
      * New IOManager instance
      */
-    public BasicIOManager() {
+    public DefaultIOManager() {
         this(System.in, System.out);
     }
 
@@ -194,7 +169,7 @@ public class BasicIOManager implements IOManager {
      * @param in  Input stream
      * @param out Output stream
      */
-    public BasicIOManager(InputStream in, PrintStream out) {
+    public DefaultIOManager(InputStream in, PrintStream out) {
         this(in, out, textsDefault);
     }
 
@@ -205,7 +180,7 @@ public class BasicIOManager implements IOManager {
      * @param out   Output stream
      * @param texts Console output strings
      */
-    public BasicIOManager(InputStream in, PrintStream out, Map<String, String> texts) {
+    public DefaultIOManager(InputStream in, PrintStream out, Map<String, String> texts) {
         this.in = new Scanner(in);
         this.out = out;
         this.texts = texts;
@@ -219,9 +194,9 @@ public class BasicIOManager implements IOManager {
      * @return Real number
      * @throws WrongOperandException See {@see WrongOperandException}
      */
-    private double parseReal(String str) throws WrongOperandException {
+    private IReal parseReal(String str) throws WrongOperandException {
         try {
-            return Double.parseDouble(str);
+            return new Real(str);
         } catch (NumberFormatException e) {
             out.println(this.texts.get("errorNAN"));
             throw new WrongOperandException();

@@ -1,14 +1,14 @@
 package com.cvut.bd6b36pjv;
 
-import com.cvut.bd6b36pjv.calculator.Calculator;
-import com.cvut.bd6b36pjv.calculator.DefaultCalculator;
-import com.cvut.bd6b36pjv.calculator.Operation;
-import com.cvut.bd6b36pjv.exceptions.DivisionByZeroException;
+import com.cvut.bd6b36pjv.calculator.api.ICalculator;
+import com.cvut.bd6b36pjv.calculator.api.IReal;
+import com.cvut.bd6b36pjv.calculator.domain.BasicCalculatorOperation;
+import com.cvut.bd6b36pjv.calculator.implementation.DefaultCalculator;
 import com.cvut.bd6b36pjv.exceptions.WrongInputException;
-import com.cvut.bd6b36pjv.io.BasicIOManager;
-import com.cvut.bd6b36pjv.io.IOManager;
+import com.cvut.bd6b36pjv.io.implementation.DefaultIOManager;
+import com.cvut.bd6b36pjv.io.api.IOManager;
 
-import static com.cvut.bd6b36pjv.calculator.Operation.QUIT;
+import static com.cvut.bd6b36pjv.calculator.domain.BasicCalculatorOperation.QUIT;
 
 /**
  * Main application
@@ -18,18 +18,18 @@ public class Main {
      * Application entry point
      */
     public static void main(String[] args) {
-        IOManager io = new BasicIOManager();
-        Calculator calc = new DefaultCalculator();
+        IOManager io = new DefaultIOManager();
+        ICalculator calc = new DefaultCalculator();
 
-        Operation op;
+        String op;
 
         while (true) {
             try {
                 op = io.readOperation();
-                if (op == QUIT)
+                if (op.equals(BasicCalculatorOperation.QUIT))
                     break;
 
-                double[] operands = io.readOperands(op);
+                IReal[] operands = io.readOperands(op);
                 int precision = io.readPrecision();
 
                 io.printResult(operands, op, calc.compute(op, operands), precision);
@@ -37,7 +37,7 @@ public class Main {
             catch (WrongInputException e) {
                 op = null;
             } catch (UnsupportedOperationException e) {
-                System.out.println("Operation isn't yet implemented");
+                System.out.println("BasicCalculatorOperation isn't yet implemented");
                 op = null;
             }
         }

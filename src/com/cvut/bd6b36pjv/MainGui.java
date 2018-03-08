@@ -1,11 +1,11 @@
 package com.cvut.bd6b36pjv;
 
-import com.cvut.bd6b36pjv.calculator.Calculator;
-import com.cvut.bd6b36pjv.calculator.DefaultCalculator;
+import com.cvut.bd6b36pjv.calculator.api.ICalculator;
+import com.cvut.bd6b36pjv.calculator.api.IGuiCalculator;
+import com.cvut.bd6b36pjv.calculator.implementation.DefaultCalculator;
+import com.cvut.bd6b36pjv.calculator.implementation.GuiCalculator;
 import com.cvut.bd6b36pjv.gui.Gui;
 import javafx.application.Application;
-
-import java.util.concurrent.CountDownLatch;
 
 /**
  * Main application
@@ -15,7 +15,7 @@ public class MainGui {
      * Application entry point
      */
     public static void main(String[] args) throws InterruptedException {
-        Calculator calc = new DefaultCalculator();
+        IGuiCalculator calc = new GuiCalculator();
 
         new Thread() {
             @Override
@@ -26,7 +26,5 @@ public class MainGui {
 
         Gui.latch.await();
         Gui.calculator = calc;
-
-        System.out.println("calc");
     }
 }

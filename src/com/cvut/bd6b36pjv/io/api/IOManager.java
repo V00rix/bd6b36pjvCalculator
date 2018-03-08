@@ -1,6 +1,7 @@
-package com.cvut.bd6b36pjv.io;
+package com.cvut.bd6b36pjv.io.api;
 
-import com.cvut.bd6b36pjv.calculator.Operation;
+import com.cvut.bd6b36pjv.calculator.api.IReal;
+import com.cvut.bd6b36pjv.calculator.domain.BasicCalculatorOperation;
 import com.cvut.bd6b36pjv.exceptions.WrongOperandException;
 import com.cvut.bd6b36pjv.exceptions.WrongOperationException;
 
@@ -10,19 +11,19 @@ import com.cvut.bd6b36pjv.exceptions.WrongOperationException;
 public interface IOManager {
     /**
      * Prints message and parses input into operation
-     * @return Operation to be computed
+     * @return BasicCalculatorOperation to be computed
      * @throws WrongOperationException See {@see WrongOperationException}
      */
-    Operation readOperation() throws WrongOperationException;
+    String readOperation() throws WrongOperationException;
 
     /**
      * Reads two real number operands
-     * @param op Operation to specify names for operands
+     * @param op BasicCalculatorOperation to specify names for operands
      * @return Two real numbers
      * @throws WrongOperandException See {@see WrongOperandException}
      * @throws WrongOperationException See {@see WrongOperationException}
      */
-    double[] readOperands(Operation op) throws WrongOperandException, WrongOperationException;
+    IReal[] readOperands(String op) throws WrongOperandException, WrongOperationException;
 
     /**
      * Reads two real number operands
@@ -30,7 +31,7 @@ public interface IOManager {
      * @throws WrongOperandException See {@see WrongOperandException}
      * @throws WrongOperationException See {@see WrongOperationException}
      */
-    double[] readOperands() throws WrongOperandException, WrongOperationException;
+    IReal[] readOperands() throws WrongOperandException, WrongOperationException;
 
     /**
      * Reads calculation precision
@@ -42,12 +43,12 @@ public interface IOManager {
     /**
      * Prints calculation string
      * @param operands Operands
-     * @param op Operation
+     * @param op BasicCalculatorOperation
      * @param result Result of calculation
      * @param precision Precision of display (not calculation)
      * @throws WrongOperationException See {@see WrongOperationException}
      */
-    void printResult(double[] operands, Operation op, double result, int precision) throws WrongOperationException;
+    void printResult(IReal[] operands, String op, IReal result, int precision) throws WrongOperationException;
 
     /**
      * Prints error message
