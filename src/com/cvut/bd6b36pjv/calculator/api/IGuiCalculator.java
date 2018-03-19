@@ -16,21 +16,21 @@ public interface IGuiCalculator extends ICalculator {
      * @return Gui display result
      * @throws WrongOperationException WrongOperationException
      */
-    BigDecimal setOperation(String op) throws WrongOperationException;
+    String setOperation(String op) throws WrongOperationException;
 
     /**
      * Digit input handler
      * @param number Digit
      * @return Gui display result
      */
-    BigDecimal input(char number);
+    String input(char number);
 
     /**
      * Digit input handler
      * @param number Digit
      * @return Gui display result
      */
-    BigDecimal input(int number);
+    String input(int number);
 
     int getPrecision();
 }

@@ -143,7 +143,7 @@ public class Gui extends Application {
      * Update view label with current operand
      * @param operand Number to display
      */
-    private static void updateView(BigDecimal operand) {
-        digitContainer.setText(operand.stripTrailingZeros().toPlainString());
+    private static void updateView(String operand) {
+        digitContainer.setText(operand);
     }
 }

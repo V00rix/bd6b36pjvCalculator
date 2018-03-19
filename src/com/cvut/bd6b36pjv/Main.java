@@ -1,7 +1,6 @@
 package com.cvut.bd6b36pjv;
 
 import com.cvut.bd6b36pjv.calculator.api.ICalculator;
-import com.cvut.bd6b36pjv.calculator.api.IReal;
 import com.cvut.bd6b36pjv.calculator.domain.enumeration.BasicCalculatorOperation;
 import com.cvut.bd6b36pjv.calculator.implementation.DefaultCalculator;
 import com.cvut.bd6b36pjv.exceptions.WrongInputException;
