@@ -1,9 +1,9 @@
 package com.cvut.bd6b36pjv;
 
-import com.cvut.bd6b36pjv.calculator.api.ICalculator;
 import com.cvut.bd6b36pjv.calculator.api.IGuiCalculator;
-import com.cvut.bd6b36pjv.calculator.implementation.DefaultCalculator;
+import com.cvut.bd6b36pjv.calculator.domain.enumeration.CalculatorOperation;
 import com.cvut.bd6b36pjv.calculator.implementation.GuiCalculator;
+import com.cvut.bd6b36pjv.exceptions.WrongOperationException;
 import com.cvut.bd6b36pjv.gui.Gui;
 import javafx.application.Application;
 
@@ -14,7 +14,9 @@ public class MainGui {
     /**
      * Application entry point
      */
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IllegalAccessException, WrongOperationException {
+        System.out.println(CalculatorOperation.Code(CalculatorOperation.class, "+"));
+
         IGuiCalculator calc = new GuiCalculator();
 
         new Thread() {

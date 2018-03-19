@@ -1,8 +1,6 @@
 package com.cvut.bd6b36pjv.io.implementation;
 
-import com.cvut.bd6b36pjv.calculator.api.IReal;
-import com.cvut.bd6b36pjv.calculator.domain.BasicCalculatorOperation;
-import com.cvut.bd6b36pjv.calculator.domain.Real;
+import com.cvut.bd6b36pjv.calculator.domain.enumeration.BasicCalculatorOperation;
 import com.cvut.bd6b36pjv.exceptions.DivisionByZeroException;
 import com.cvut.bd6b36pjv.exceptions.WrongOperandException;
 import com.cvut.bd6b36pjv.exceptions.WrongOperationException;
@@ -10,11 +8,12 @@ import com.cvut.bd6b36pjv.io.api.IOManager;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import static com.cvut.bd6b36pjv.calculator.domain.BasicCalculatorOperation.*;
+import static com.cvut.bd6b36pjv.calculator.domain.enumeration.BasicCalculatorOperation.*;
 
 /**
  * @see IOManager basic implementation
@@ -26,6 +25,7 @@ public class DefaultIOManager implements IOManager {
      * Console output strings - defaults
      */
     private static Map<String, String> textsDefault;
+
     // initialization
     static {
         textsDefault = new HashMap<String, String>();
@@ -76,55 +76,53 @@ public class DefaultIOManager implements IOManager {
 
     //--- Implementation ---//
     @Override
-    public String readOperation() throws WrongOperationException {
-        try {
-            out.print(this.texts.get("operation"));
-            String input = in.next();
-            return BasicCalculatorOperation.Code(input);
+    public String readOperation() throws WrongOperationException, IllegalAccessException {
+        out.print(this.texts.get("operation"));
+        String input = in.next();
+        if (!BasicCalculatorOperation.Contains(BasicCalculatorOperation.class, input)) {
+            out.println(this.texts.get("errorOperation"));
+            throw new WrongOperationException();
         }
-        catch (WrongOperationException e) {
-                out.println(this.texts.get("errorOperation"));
-                throw new WrongOperationException();
-        }
+        return BasicCalculatorOperation.Code(BasicCalculatorOperation.class, input);
     }
 
     @Override
-    public IReal[] readOperands() throws WrongOperandException, WrongOperationException {
-        IReal[] operands = new Real[2];
+    public BigDecimal[] readOperands() throws WrongOperandException {
+        BigDecimal[] operands = new BigDecimal[2];
         out.print(this.texts.get("operand"));
-        operands[0] = this.parseReal(in.next());
+        operands[0] = this.parseBigDecimal(in.next());
         out.print(this.texts.get("operand"));
-        operands[1] = this.parseReal(in.next());
+        operands[1] = this.parseBigDecimal(in.next());
         return operands;
     }
 
     @Override
-    public IReal[] readOperands(String op) throws WrongOperandException, WrongOperationException {
-        IReal[] operands = new Real[2];
+    public BigDecimal[] readOperands(String op) throws WrongOperandException, WrongOperationException {
+        BigDecimal[] operands = new BigDecimal[2];
         switch (op) {
             case ADDITION:
                 out.print(this.texts.get("+"));
-                operands[0] = this.parseReal(in.next());
+                operands[0] = this.parseBigDecimal(in.next());
                 out.print(this.texts.get("+"));
-                operands[1] = this.parseReal(in.next());
+                operands[1] = this.parseBigDecimal(in.next());
                 return operands;
             case SUBTRACTION:
                 out.print(this.texts.get("-0"));
-                operands[0] = this.parseReal(in.next());
+                operands[0] = this.parseBigDecimal(in.next());
                 out.print(this.texts.get("-1"));
-                operands[1] = this.parseReal(in.next());
+                operands[1] = this.parseBigDecimal(in.next());
                 return operands;
             case MULTIPLICATION:
                 out.print(this.texts.get("*0"));
-                operands[0] = this.parseReal(in.next());
+                operands[0] = this.parseBigDecimal(in.next());
                 out.print(this.texts.get("*1"));
-                operands[1] = this.parseReal(in.next());
+                operands[1] = this.parseBigDecimal(in.next());
                 return operands;
             case DIVISION:
                 out.print(this.texts.get("/0"));
-                operands[0] = this.parseReal(in.next());
+                operands[0] = this.parseBigDecimal(in.next());
                 out.print(this.texts.get("/1"));
-                operands[1] = this.parseReal(in.next());
+                operands[1] = this.parseBigDecimal(in.next());
                 if (Double.compare(operands[1].doubleValue(), 0.0) == 0) {
                     out.print(this.texts.get("error/0"));
                     throw new DivisionByZeroException();
@@ -142,11 +140,9 @@ public class DefaultIOManager implements IOManager {
     }
 
     @Override
-    public void printResult(IReal[] operands, String op, IReal result, int precision) throws WrongOperationException {
+    public void printResult(BigDecimal[] operands, String op, BigDecimal result, int precision) {
         // TODO: optimise precision
-        out.printf("%s %s %s = %s\n\n", operands[0].stringValue(precision), op,
-                Double.compare(operands[1].doubleValue(), 0.0) < 0 ? "(" + operands[1].stringValue(precision) + ")" : operands[1].stringValue(precision),
-                result.stringValue(precision));
+        out.printf("%s %s %s = %s\n\n", operands[0].toPlainString(), op, operands[1].toPlainString(), result.toPlainString());
     }
 
     @Override
@@ -190,13 +186,14 @@ public class DefaultIOManager implements IOManager {
 
     /**
      * Tries to parse string for a real number value
+     *
      * @param str String to be parsed
-     * @return Real number
+     * @return BigDecimal number
      * @throws WrongOperandException See {@see WrongOperandException}
      */
-    private IReal parseReal(String str) throws WrongOperandException {
+    private BigDecimal parseBigDecimal(String str) throws WrongOperandException {
         try {
-            return new Real(str);
+            return new BigDecimal(str);
         } catch (NumberFormatException e) {
             out.println(this.texts.get("errorNAN"));
             throw new WrongOperandException();
@@ -205,6 +202,7 @@ public class DefaultIOManager implements IOManager {
 
     /**
      * Tries to parse string for an unsigned integer value
+     *
      * @param str String to be parsed
      * @return Precision as an unsigned integer
      * @throws WrongOperandException See {@see WrongOperandException}

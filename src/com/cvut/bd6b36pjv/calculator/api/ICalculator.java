@@ -2,6 +2,11 @@ package com.cvut.bd6b36pjv.calculator.api;
 
 import com.cvut.bd6b36pjv.exceptions.WrongOperationException;
 
+import java.math.BigDecimal;
+
+/**
+ * Basic calculator API
+ */
 public interface ICalculator {
     /**
      * Compute result given operation and operands
@@ -9,5 +14,5 @@ public interface ICalculator {
      * @param operands Operands
      * @return Result of operation
      */
-    IReal compute(String op, IReal[] operands) throws WrongOperationException;
+    BigDecimal compute(String op, BigDecimal[] operands) throws WrongOperationException;
 }

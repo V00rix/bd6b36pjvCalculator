@@ -1,9 +1,9 @@
 package com.cvut.bd6b36pjv.io.api;
 
-import com.cvut.bd6b36pjv.calculator.api.IReal;
-import com.cvut.bd6b36pjv.calculator.domain.BasicCalculatorOperation;
 import com.cvut.bd6b36pjv.exceptions.WrongOperandException;
 import com.cvut.bd6b36pjv.exceptions.WrongOperationException;
+
+import java.math.BigDecimal;
 
 /**
  * API for console interactions
@@ -14,7 +14,7 @@ public interface IOManager {
      * @return BasicCalculatorOperation to be computed
      * @throws WrongOperationException See {@see WrongOperationException}
      */
-    String readOperation() throws WrongOperationException;
+    String readOperation() throws WrongOperationException, IllegalAccessException;
 
     /**
      * Reads two real number operands
@@ -23,7 +23,7 @@ public interface IOManager {
      * @throws WrongOperandException See {@see WrongOperandException}
      * @throws WrongOperationException See {@see WrongOperationException}
      */
-    IReal[] readOperands(String op) throws WrongOperandException, WrongOperationException;
+    BigDecimal[] readOperands(String op) throws WrongOperandException, WrongOperationException;
 
     /**
      * Reads two real number operands
@@ -31,7 +31,7 @@ public interface IOManager {
      * @throws WrongOperandException See {@see WrongOperandException}
      * @throws WrongOperationException See {@see WrongOperationException}
      */
-    IReal[] readOperands() throws WrongOperandException, WrongOperationException;
+    BigDecimal[] readOperands() throws WrongOperandException, WrongOperationException;
 
     /**
      * Reads calculation precision
@@ -48,7 +48,7 @@ public interface IOManager {
      * @param precision Precision of display (not calculation)
      * @throws WrongOperationException See {@see WrongOperationException}
      */
-    void printResult(IReal[] operands, String op, IReal result, int precision) throws WrongOperationException;
+    void printResult(BigDecimal[] operands, String op, BigDecimal result, int precision) throws WrongOperationException;
 
     /**
      * Prints error message
