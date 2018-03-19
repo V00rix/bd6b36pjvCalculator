@@ -19,12 +19,12 @@ public class DefaultCalculator implements ICalculator {
     private BigDecimal result;
 
     public BigDecimal getLastResult() {
-        return this.result;
+        return result;
     }
 
     public DefaultCalculator() {
-        this.result = new BigDecimal(0);
-        this.operands = new BigDecimal[]{
+        result = new BigDecimal(0);
+        operands = new BigDecimal[]{
                 new BigDecimal(0),
                 new BigDecimal(0)
         };
@@ -34,24 +34,24 @@ public class DefaultCalculator implements ICalculator {
     public BigDecimal compute(String op, BigDecimal[] operands) throws WrongOperationException {
         switch (op) {
             case BasicCalculatorOperation.ADDITION:
-                this.operands[0] = this.result = operands[0].add(operands[1]);
+                this.operands[0] = result = operands[0].add(operands[1]);
                 this.operands[1] = new BigDecimal("0");
-                return this.result;
+                return result;
             case BasicCalculatorOperation.SUBTRACTION:
-                this.operands[0] = this.result = operands[0].subtract(operands[1]);
+                this.operands[0] = result = operands[0].subtract(operands[1]);
                 this.operands[1] = new BigDecimal("0");
-                return this.result;
+                return result;
             case BasicCalculatorOperation.MULTIPLICATION:
-                this.operands[0] = this.result = operands[0].multiply(operands[1]);
+                this.operands[0] = result = operands[0].multiply(operands[1]);
                 this.operands[1] = new BigDecimal("0");
-                return this.result;
+                return result;
             case BasicCalculatorOperation.DIVISION:
                 if (Double.compare(operands[1].doubleValue(), 0.0) == 0) {
                     throw new DivisionByZeroException();
                 }
-                this.operands[0] = this.result = operands[0].divide(operands[1], RoundingMode.HALF_UP);
+                this.operands[0] = result = operands[0].divide(operands[1], RoundingMode.HALF_UP);
                 this.operands[1] = new BigDecimal("0");
-                return this.result;
+                return result;
             default:
                 throw new WrongOperationException();
         }

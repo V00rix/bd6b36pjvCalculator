@@ -3,14 +3,14 @@
 
 .custom-button {
     -fx-text-fill: #f2f2f2;
-    -fx-font-size: 32px;
+    -fx-font-size: 25px;
     -fx-padding: 10;
     -fx-background-color: #181818;
     -fx-border-radius: 0;
     -fx-border-color: #0f0f0f;
     -fx-border-width: 1;
-    -fx-min-width: 180;
-    -fx-min-height: 120;
+    -fx-min-width: 135;
+    -fx-min-height: 90;
 }
 
 .custom-button:hover {
@@ -25,6 +25,6 @@
     -fx-text-fill: #f2f2f2;
     -fx-font-size: 50px;
     -fx-padding: 0 30;
-    -fx-min-width: 720;
-    -fx-min-height: 180;
+    -fx-min-width: 540;
+    -fx-min-height: 135;
 }

@@ -24,7 +24,7 @@ public class GuiCalculator implements IGuiCalculator {
      * New instance of GuiCalculator
      */
     public GuiCalculator() {
-        this.setDefaults();
+        setDefaults();
     }
 
 
@@ -32,17 +32,17 @@ public class GuiCalculator implements IGuiCalculator {
      * Default settings
      */
     private void setDefaults() {
-        this.result = new BigDecimal("0");
-        this.operands = new BigDecimal[]{
+        result = new BigDecimal("0");
+        operands = new BigDecimal[]{
                 new BigDecimal("0"),
                 new BigDecimal("0")
         };
-        this.resultViewed = true;
-        this.unaryOccurred = false;
-        this.floatInput = false;
-        this.precision = 10;
+        resultViewed = true;
+        unaryOccurred = false;
+        floatInput = false;
+        precision = 10;
         int zeroesOnInput = 0;
-        this.operation = CalculatorOperation.ADDITION;
+        operation = CalculatorOperation.ADDITION;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class GuiCalculator implements IGuiCalculator {
             case CalculatorOperation.MULTIPLICATION:
                 return operands[0].multiply(operands[1]);
             case CalculatorOperation.DIVISION:
-                return operands[0].divide(operands[1], this.precision, RoundingMode.HALF_UP);
+                return operands[0].divide(operands[1], precision, RoundingMode.HALF_UP);
             default:
                 throw new WrongOperationException();
         }
@@ -68,90 +68,90 @@ public class GuiCalculator implements IGuiCalculator {
     public String setOperation(String op) throws WrongOperationException {
         System.out.println("operation input: " + op);
 
-        this.floatInput = false;
+        floatInput = false;
         /* Special operations */
         switch (op) {
             case CalculatorOperation.RESULT:
-                return this.resultOperation().stripTrailingZeros().toPlainString();
+                return resultOperation().stripTrailingZeros().toPlainString();
             case CalculatorOperation.FLUSH:
-                this.setDefaults();
+                setDefaults();
             case CalculatorOperation.ERASE:
-                this.operands[1] = new BigDecimal("0");
-                return this.operands[1].toPlainString();
+                operands[1] = new BigDecimal("0");
+                return operands[1].toPlainString();
             /* Unary operators */
             case CalculatorOperation.ONE_DIVIDED:
-                if (this.resultViewed) {
-                    this.result = this.operands[0] = new BigDecimal("1.0").divide(this.result, this.precision, RoundingMode.HALF_UP);
-                    return this.result.stripTrailingZeros().toPlainString();
+                if (resultViewed) {
+                    result = operands[0] = new BigDecimal("1.0").divide(result, precision, RoundingMode.HALF_UP);
+                    return result.stripTrailingZeros().toPlainString();
                 } else {
-                    this.operands[1] = new BigDecimal("1.0").divide(this.operands[1], this.precision, RoundingMode.HALF_UP);
-                    return this.operands[1].stripTrailingZeros().toPlainString();
+                    operands[1] = new BigDecimal("1.0").divide(operands[1], precision, RoundingMode.HALF_UP);
+                    return operands[1].stripTrailingZeros().toPlainString();
                 }
             case CalculatorOperation.SQUARE:
-                if (this.resultViewed) {
-                    this.result = this.operands[0] = this.result.multiply(this.result);
-                    return this.result.stripTrailingZeros().toPlainString();
+                if (resultViewed) {
+                    result = operands[0] = result.multiply(result);
+                    return result.stripTrailingZeros().toPlainString();
                 } else {
-                    this.operands[1] = this.operands[1].multiply(this.operands[1]);
-                    return this.operands[1].stripTrailingZeros().toPlainString();
+                    operands[1] = operands[1].multiply(operands[1]);
+                    return operands[1].stripTrailingZeros().toPlainString();
                 }
             case CalculatorOperation.SQUARE_ROOT:
-                if (this.resultViewed) {
-                    this.result = this.operands[0] = new BigDecimal(Math.sqrt(this.result.doubleValue()));
-                    this.result = this.operands[0].setScale(this.precision, RoundingMode.HALF_UP);
-                    return this.result.stripTrailingZeros().toPlainString();
+                if (resultViewed) {
+                    result = operands[0] = new BigDecimal(Math.sqrt(result.doubleValue()));
+                    result = operands[0].setScale(precision, RoundingMode.HALF_UP);
+                    return result.stripTrailingZeros().toPlainString();
                 } else {
-                    this.operands[1] = new BigDecimal(Math.sqrt(this.operands[1].doubleValue()));
-                    this.operands[1].setScale(this.precision, RoundingMode.HALF_UP);
-                    return this.operands[1].stripTrailingZeros().toPlainString();
+                    operands[1] = new BigDecimal(Math.sqrt(operands[1].doubleValue()));
+                    operands[1].setScale(precision, RoundingMode.HALF_UP);
+                    return operands[1].stripTrailingZeros().toPlainString();
                 }
             case CalculatorOperation.PERCENTAGE:
-                if (this.resultViewed) {
-                    this.result = this.operands[0] = this.result.divide(new BigDecimal("100"), this.precision, RoundingMode.HALF_UP).multiply(this.result);
-                    return this.result.stripTrailingZeros().toPlainString();
+                if (resultViewed) {
+                    result = operands[0] = result.divide(new BigDecimal("100"), precision, RoundingMode.HALF_UP).multiply(result);
+                    return result.stripTrailingZeros().toPlainString();
                 } else {
-                    this.operands[1] = this.operands[0].divide(new BigDecimal("100"), this.precision, RoundingMode.HALF_UP).multiply(this.operands[1]);
-                    return this.operands[1].stripTrailingZeros().toPlainString();
+                    operands[1] = operands[0].divide(new BigDecimal("100"), precision, RoundingMode.HALF_UP).multiply(operands[1]);
+                    return operands[1].stripTrailingZeros().toPlainString();
                 }
             case CalculatorOperation.SIGN_SWITCH:
-                if (this.resultViewed) {
-                    this.result = this.operands[0] = this.result.multiply(new BigDecimal("-1.0"));
-                    return this.result.stripTrailingZeros().toPlainString();
+                if (resultViewed) {
+                    result = operands[0] = result.multiply(new BigDecimal("-1.0"));
+                    return result.stripTrailingZeros().toPlainString();
                 } else {
-                    this.operands[1] = this.operands[1].multiply(new BigDecimal("-1.0"));
-                    return this.operands[1].stripTrailingZeros().toPlainString();
+                    operands[1] = operands[1].multiply(new BigDecimal("-1.0"));
+                    return operands[1].stripTrailingZeros().toPlainString();
                 }
             case CalculatorOperation.REMOVE_LAST:
-                return this.removeLast().toPlainString();
+                return removeLast().toPlainString();
             case CalculatorOperation.FLOAT:
-                return this.setFloatingPoint().toPlainString();
+                return setFloatingPoint().toPlainString();
             default:
                 break;
         }
 
-        if (this.resultViewed) {
-            this.operands[1] = new BigDecimal("0");
-            this.operation = op;
-            this.resultViewed = false;
+        if (resultViewed) {
+            operands[1] = new BigDecimal("0");
+            operation = op;
+            resultViewed = false;
 
 //            this.precision = this.result.getPrecision();
-            return this.result.stripTrailingZeros().toPlainString();
+            return result.stripTrailingZeros().toPlainString();
         }
 
         /* Simple binary operations */
-        this.unaryOccurred = false;
-        BigDecimal result = compute(this.operation, new BigDecimal[]{this.operands[0], this.operands[1]});
+        unaryOccurred = false;
+        BigDecimal result = compute(operation, new BigDecimal[]{operands[0], operands[1]});
 
         System.out.println(result.toPlainString());
 //        System.out.println(result.getPrecision());
 
-        this.operands[0] = result;
+        operands[0] = result;
         this.result = result;
 
-        this.operands[1] = new BigDecimal("0");
-        this.operation = op;
+        operands[1] = new BigDecimal("0");
+        operation = op;
 
-        this.resultViewed = false;
+        resultViewed = false;
 
 //        this.precision = result.getPrecision();
         return result.stripTrailingZeros().toPlainString();
@@ -164,19 +164,19 @@ public class GuiCalculator implements IGuiCalculator {
      * @throws WrongOperationException WrongOperationException
      */
     private BigDecimal resultOperation() throws WrongOperationException {
-        this.unaryOccurred = false;
+        unaryOccurred = false;
 
-        BigDecimal result = compute(this.operation, new BigDecimal[]{this.result, this.operands[1]});
+        BigDecimal result = compute(operation, new BigDecimal[]{this.result, operands[1]});
 
         System.out.println(result.toPlainString());
         System.out.println("Precision: " + result.precision());
         System.out.println("Scale: " + result.scale());
 
-        this.operands[0] = this.result = result;
+        operands[0] = this.result = result;
 
-        this.operands[1] = new BigDecimal("0");
+        operands[1] = new BigDecimal("0");
 
-        this.resultViewed = true;
+        resultViewed = true;
 
 //        this.precision = this.result.getPrecision();
         return this.result.stripTrailingZeros();
@@ -185,40 +185,40 @@ public class GuiCalculator implements IGuiCalculator {
     @Override
     public String input(char number) {
         System.out.println("Digit input: " + number);
-        System.out.println("Result viewed: " + this.resultViewed);
+        System.out.println("Result viewed: " + resultViewed);
 
-        if (this.resultViewed) {
-            this.setDefaults();
-            this.resultViewed = false;
+        if (resultViewed) {
+            setDefaults();
+            resultViewed = false;
         }
 
-        if (this.unaryOccurred) {
-            this.unaryOccurred = false;
-            this.operands[1] = new BigDecimal("0");
+        if (unaryOccurred) {
+            unaryOccurred = false;
+            operands[1] = new BigDecimal("0");
         }
 
-        if (this.floatInput) {
-            String strVal = this.operands[1].toPlainString();
-            int scale = this.operands[1].scale() + 1;
-            this.operands[1] = new BigDecimal(strVal + (strVal.contains(".") ? "" : ".") + number);
-            this.operands[1].setScale(scale, RoundingMode.HALF_UP);
-            return this.operands[1].toPlainString();
+        if (floatInput) {
+            String strVal = operands[1].toPlainString();
+            int scale = operands[1].scale() + 1;
+            operands[1] = new BigDecimal(strVal + (strVal.contains(".") ? "" : ".") + number);
+            operands[1].setScale(scale, RoundingMode.HALF_UP);
+            return operands[1].toPlainString();
         }
 
-        this.operands[1] = new BigDecimal(this.operands[1].toPlainString() + "" + number);
-        return this.operands[1].toPlainString();
+        operands[1] = new BigDecimal(operands[1].toPlainString() + "" + number);
+        return operands[1].toPlainString();
 
 //        return this.input(Character.getNumericValue(number));
     }
 
     @Override
     public String input(int number) {
-        return this.input(Character.forDigit(number, 10));
+        return input(Character.forDigit(number, 10));
     }
 
     @Override
     public int getPrecision() {
-        return this.precision;
+        return precision;
     }
 
     /**
@@ -227,17 +227,17 @@ public class GuiCalculator implements IGuiCalculator {
      * @return Operation result
      */
     private BigDecimal removeLast() {
-        String strVal = this.operands[1].toPlainString();
-        if (!(this.resultViewed || this.unaryOccurred)) {
+        String strVal = operands[1].toPlainString();
+        if (!(resultViewed || unaryOccurred)) {
             if (strVal.length() == 1)
-                this.operands[1] = new BigDecimal(0);
+                operands[1] = new BigDecimal(0);
             if (strVal.length() > ((strVal.charAt(0) == '-' ? 2 : 1)))
-                this.operands[1] = new BigDecimal(strVal.substring(0, strVal.length() - 1));
+                operands[1] = new BigDecimal(strVal.substring(0, strVal.length() - 1));
         }
-        if (!this.operands[1].toPlainString().contains("."))
-            this.floatInput = false;
+        if (!operands[1].toPlainString().contains("."))
+            floatInput = false;
 //        this.precision = this.operands[1].getPrecision();
-        return this.operands[1];
+        return operands[1];
     }
 
     /**
@@ -248,7 +248,7 @@ public class GuiCalculator implements IGuiCalculator {
 //        int scale = operands[1].scale();
 //        if (scale < 1)
 //            this.operands[1].setScale(1, RoundingMode.HALF_UP);
-        this.floatInput = true;
-        return this.operands[1];
+        floatInput = true;
+        return operands[1];
     }
 }

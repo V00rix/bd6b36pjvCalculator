@@ -77,10 +77,10 @@ public class DefaultIOManager implements IOManager {
     //--- Implementation ---//
     @Override
     public String readOperation() throws WrongOperationException, IllegalAccessException {
-        out.print(this.texts.get("operation"));
+        out.print(texts.get("operation"));
         String input = in.next();
         if (!BasicCalculatorOperation.Contains(BasicCalculatorOperation.class, input)) {
-            out.println(this.texts.get("errorOperation"));
+            out.println(texts.get("errorOperation"));
             throw new WrongOperationException();
         }
         return BasicCalculatorOperation.Code(BasicCalculatorOperation.class, input);
@@ -89,10 +89,10 @@ public class DefaultIOManager implements IOManager {
     @Override
     public BigDecimal[] readOperands() throws WrongOperandException {
         BigDecimal[] operands = new BigDecimal[2];
-        out.print(this.texts.get("operand"));
-        operands[0] = this.parseBigDecimal(in.next());
-        out.print(this.texts.get("operand"));
-        operands[1] = this.parseBigDecimal(in.next());
+        out.print(texts.get("operand"));
+        operands[0] = parseBigDecimal(in.next());
+        out.print(texts.get("operand"));
+        operands[1] = parseBigDecimal(in.next());
         return operands;
     }
 
@@ -101,30 +101,30 @@ public class DefaultIOManager implements IOManager {
         BigDecimal[] operands = new BigDecimal[2];
         switch (op) {
             case ADDITION:
-                out.print(this.texts.get("+"));
-                operands[0] = this.parseBigDecimal(in.next());
-                out.print(this.texts.get("+"));
-                operands[1] = this.parseBigDecimal(in.next());
+                out.print(texts.get("+"));
+                operands[0] = parseBigDecimal(in.next());
+                out.print(texts.get("+"));
+                operands[1] = parseBigDecimal(in.next());
                 return operands;
             case SUBTRACTION:
-                out.print(this.texts.get("-0"));
-                operands[0] = this.parseBigDecimal(in.next());
-                out.print(this.texts.get("-1"));
-                operands[1] = this.parseBigDecimal(in.next());
+                out.print(texts.get("-0"));
+                operands[0] = parseBigDecimal(in.next());
+                out.print(texts.get("-1"));
+                operands[1] = parseBigDecimal(in.next());
                 return operands;
             case MULTIPLICATION:
-                out.print(this.texts.get("*0"));
-                operands[0] = this.parseBigDecimal(in.next());
-                out.print(this.texts.get("*1"));
-                operands[1] = this.parseBigDecimal(in.next());
+                out.print(texts.get("*0"));
+                operands[0] = parseBigDecimal(in.next());
+                out.print(texts.get("*1"));
+                operands[1] = parseBigDecimal(in.next());
                 return operands;
             case DIVISION:
-                out.print(this.texts.get("/0"));
-                operands[0] = this.parseBigDecimal(in.next());
-                out.print(this.texts.get("/1"));
-                operands[1] = this.parseBigDecimal(in.next());
+                out.print(texts.get("/0"));
+                operands[0] = parseBigDecimal(in.next());
+                out.print(texts.get("/1"));
+                operands[1] = parseBigDecimal(in.next());
                 if (Double.compare(operands[1].doubleValue(), 0.0) == 0) {
-                    out.print(this.texts.get("error/0"));
+                    out.print(texts.get("error/0"));
                     throw new DivisionByZeroException();
                 }
                 return operands;
@@ -135,8 +135,8 @@ public class DefaultIOManager implements IOManager {
 
     @Override
     public int readPrecision() throws WrongOperandException {
-        out.print(this.texts.get("."));
-        return this.parsePrecision(in.next());
+        out.print(texts.get("."));
+        return parsePrecision(in.next());
     }
 
     @Override
@@ -147,7 +147,7 @@ public class DefaultIOManager implements IOManager {
 
     @Override
     public void errorMessage(String s) {
-        this.out.println(this.texts.get(s));
+        out.println(texts.get(s));
     }
 
     //--- Constructors ---//
@@ -195,7 +195,7 @@ public class DefaultIOManager implements IOManager {
         try {
             return new BigDecimal(str);
         } catch (NumberFormatException e) {
-            out.println(this.texts.get("errorNAN"));
+            out.println(texts.get("errorNAN"));
             throw new WrongOperandException();
         }
     }
@@ -211,12 +211,12 @@ public class DefaultIOManager implements IOManager {
         try {
             int i = Integer.parseInt(str);
             if (i < 0) {
-                out.println(this.texts.get("error."));
+                out.println(texts.get("error."));
                 throw new WrongOperandException();
             }
             return i;
         } catch (NumberFormatException e) {
-            out.println(this.texts.get("error."));
+            out.println(texts.get("error."));
             throw new WrongOperandException();
         }
     }

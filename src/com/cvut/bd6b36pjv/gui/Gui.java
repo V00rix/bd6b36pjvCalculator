@@ -10,6 +10,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -19,15 +22,15 @@ import java.util.concurrent.CountDownLatch;
 public class Gui extends Application {
     public static final CountDownLatch latch = new CountDownLatch(1);
     private static Label digitContainer;
-
     public static IGuiCalculator calculator;
+    private static Stage stage;
 
     @Override
     public void start(Stage primaryStage) {
         latch.countDown();
 
         primaryStage.setTitle("Calculator");
-
+        stage = primaryStage;
 
         GridPane root = new GridPane();
         RowConstraints row = new RowConstraints();
@@ -67,13 +70,78 @@ public class Gui extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Helper to map operation on key pressed
+     * @param character Key pressed as character (as string)
+     * @throws WrongOperationException WrongOperationException
+     */
+    private static void mapOperation(String character) throws WrongOperationException {
+        switch (character) {
+            case "0":
+            case "1":
+            case "2":
+            case "3":
+            case "4":
+            case "5":
+            case "6":
+            case "7":
+            case "8":
+            case "9":
+                updateView(calculator.input(Integer.parseInt(character)));
+                break;
+            case "+":
+            case "-":
+            case "*":
+            case "/":
+            case "=":
+            case ".":
+            case "C":
+                updateView(calculator.setOperation(character));
+                break;
+            case "с":
+                updateView(calculator.setOperation(CalculatorOperation.FLUSH));
+                break;
+            case "E":
+            case "e":
+                updateView(calculator.setOperation(CalculatorOperation.ERASE));
+                break;
+            case "s":
+            case "S":
+                updateView(calculator.setOperation(CalculatorOperation.SQUARE_ROOT));
+                break;
+            case "q":
+            case "Q":
+                updateView(calculator.setOperation(CalculatorOperation.SQUARE));
+                break;
+            case "f":
+            case "F":
+                updateView(calculator.setOperation(CalculatorOperation.ONE_DIVIDED));
+                break;
+            case "i":
+            case "I":
+                updateView(calculator.setOperation(CalculatorOperation.SIGN_SWITCH));
+                break;
+            case "p":
+            case "P":
+                updateView(calculator.setOperation(CalculatorOperation.PERCENTAGE));
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    /**
+     * Helper for creating buttons for gui
+     * @return Array of buttons
+     */
     private static Button[] createButtons() {
         Button[] buttons = new Button[24];
 
-        buttons[0]  = createOperation(CalculatorOperation.PERCENTAGE);
-        buttons[1]  = createOperation(CalculatorOperation.SQUARE_ROOT);
-        buttons[2]  = createOperation(CalculatorOperation.SQUARE);
-        buttons[3]  = createOperation(CalculatorOperation.ONE_DIVIDED);
+        buttons[0] = createOperation(CalculatorOperation.PERCENTAGE);
+        buttons[1] = createOperation(CalculatorOperation.SQUARE_ROOT);
+        buttons[2] = createOperation(CalculatorOperation.SQUARE);
+        buttons[3] = createOperation(CalculatorOperation.ONE_DIVIDED);
         buttons[4] = createOperation(CalculatorOperation.ERASE);
 
         buttons[5] = createOperation(CalculatorOperation.FLUSH);
@@ -98,19 +166,40 @@ public class Gui extends Application {
         buttons[22] = createOperation(CalculatorOperation.FLOAT);
         buttons[23] = createOperation(CalculatorOperation.RESULT);
 
+        for (Button button : buttons) {
+            button.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent e) {
+                    try {
+                        if (e.getCode() == KeyCode.ENTER) {
+                            updateView(calculator.setOperation(CalculatorOperation.RESULT));
+                        } else if (e.getCode() == KeyCode.ESCAPE) {
+                            stage.close();
+                        } else if (e.getCode() == KeyCode.BACK_SPACE) {
+                            updateView(calculator.setOperation(CalculatorOperation.REMOVE_LAST));
+                        } else {
+                            mapOperation(e.getText());
+                        }
+                    } catch (WrongOperationException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            });
+        }
         return buttons;
     }
 
     /**
      * Digit button creation
+     *
      * @param digit Digit
      * @return Styled button with event handler
      */
     private static Button createDigit(int digit) {
         Button b = new Button(String.valueOf(digit));
-        b.setOnAction(new EventHandler<ActionEvent>() {
+        b.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(ActionEvent actionEvent) {
+            public void handle(MouseEvent mouseEvent) {
                 updateView(calculator.input(digit));
             }
         });
@@ -120,14 +209,15 @@ public class Gui extends Application {
 
     /**
      * Operation button creation
+     *
      * @param operation Operation
      * @return Styled button with event handler
      */
     private static Button createOperation(String operation) {
         Button b = new Button(String.valueOf(operation));
-        b.setOnAction(new EventHandler<ActionEvent>() {
+        b.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(ActionEvent actionEvent) {
+            public void handle(MouseEvent mouseEvent) {
                 try {
                     updateView(calculator.setOperation(operation));
                 } catch (WrongOperationException e) {
@@ -141,6 +231,7 @@ public class Gui extends Application {
 
     /**
      * Update view label with current operand
+     *
      * @param operand Number to display
      */
     private static void updateView(String operand) {
